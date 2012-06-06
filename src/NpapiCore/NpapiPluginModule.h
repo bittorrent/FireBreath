@@ -47,6 +47,9 @@ namespace FB {
 
         protected:
             boost::thread::id m_threadId;
+#ifdef _WIN32
+			uint32_t m_winThreadId;
+#endif
             static volatile uint32_t PluginModuleInitialized;
             static Modules m_modules;
 

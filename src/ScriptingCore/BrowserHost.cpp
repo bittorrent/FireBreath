@@ -71,9 +71,14 @@ namespace FB {
 volatile int FB::BrowserHost::InstanceCount(0);
 
 FB::BrowserHost::BrowserHost()
-    : _asyncManager(boost::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
+    : _asyncManager(boost::make_shared<AsyncCallManager>()),
       m_isShutDown(false), m_streamMgr(boost::make_shared<FB::BrowserStreamManager>()), m_htmlLogEnabled(true)
 {
+#ifdef _WIN32
+	m_winThreadId = GetCurrentThreadId();
+#else
+	m_threadId(boost::this_thread::get_id());
+#endif
     ++InstanceCount;
 }
 
@@ -224,7 +229,11 @@ void FB::BrowserHost::assertMainThread() const
 
 bool FB::BrowserHost::isMainThread() const
 {
+#ifdef _WIN32
+	return m_winThreadId == GetCurrentThreadId();
+#else
     return m_threadId == boost::this_thread::get_id();
+#endif
 }
 
 void FB::BrowserHost::freeRetainedObjects() const

@@ -468,6 +468,9 @@ namespace FB
     private:
         // Stores the thread_id for the thread the plugin was started on
         boost::thread::id m_threadId;
+#ifdef _WIN32
+		uint32_t m_winThreadId;
+#endif
         // if true then the plugin this belongs to has shut down (or is shutting down)
         bool m_isShutDown;
         // Used to prevent race conditions with scheduling cross-thread calls during shutdown

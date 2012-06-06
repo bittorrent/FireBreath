@@ -66,8 +66,12 @@ void NpapiPluginModule::ReleaseModule(const void* key) {
 }
 
 NpapiPluginModule::NpapiPluginModule()
-    : m_threadId(boost::this_thread::get_id())
 {
+#ifdef _WIN32
+	m_winThreadId = GetCurrentThreadId();
+#else
+    m_threadId = boost::this_thread::get_id();
+#endif
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
 }
 
@@ -79,7 +83,11 @@ NpapiPluginModule::~NpapiPluginModule()
 void NpapiPluginModule::assertMainThread()
 {
 #ifdef _DEBUG
+#ifdef _WIN32
+	assert(m_winThreadId == GetCurrentThreadId());
+#else
     assert(m_threadId == boost::this_thread::get_id());
+#endif
 #endif
 }
 
